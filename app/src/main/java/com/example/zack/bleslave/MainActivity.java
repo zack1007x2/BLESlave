@@ -70,6 +70,8 @@ public class MainActivity extends Activity {
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
     private List<BluetoothDevice> mDeviceList = new ArrayList<BluetoothDevice>();
     private BluetoothGattServer mGattServer;
+    private BluetoothGattService mGattService;
+    private BluetoothGattCharacteristic mCharacteristic;
 
 
     private final String LIST_UUID = "UUID";
@@ -92,7 +94,9 @@ public class MainActivity extends Activity {
 
         Bm = (BluetoothManager) getSystemService(this.BLUETOOTH_SERVICE);
         BAdapter = Bm.getAdapter();
-        mGattServer = Bm.openGattServer(this,mBTGattServerCallBack);
+
+        initGattServer();
+
 
 
         if(BAdapter ==null||!BAdapter.isEnabled()){
@@ -106,6 +110,16 @@ public class MainActivity extends Activity {
         advtising = false;
 
     }
+
+    private void initGattServer() {
+        mGattServer = Bm.openGattServer(this, mBTGattServerCallBack);
+        mGattService = new BluetoothGattService(MY_UUID,BluetoothGattService.SERVICE_TYPE_PRIMARY);
+        mCharacteristic = new BluetoothGattCharacteristic(MY_UUID,BluetoothGattCharacteristic
+                .PERMISSION_WRITE,BluetoothGattCharacteristic.PROPERTY_WRITE);
+        mGattService.addCharacteristic(mCharacteristic);
+        mGattServer.addService(mGattService);
+    }
+
     private void setup_master() {
         bluetoothLeScanner = BAdapter.getBluetoothLeScanner();
 
@@ -445,7 +459,40 @@ public class MainActivity extends Activity {
     };
 
 
-    BluetoothGattServerCallback mBTGattServerCallBack = new BluetoothGattServerCallback() {
+    BluetoothGattServerCallback mBTGattServerCallBack = new BluetoothGattServerCallback(){
+        @Override
+        public void onConnectionStateChange(BluetoothDevice device, int status, int newState) {
+            super.onConnectionStateChange(device, status, newState);
+            Log.d("Zack", "onConnectionStateChange status=" + status + "->" + newState);
+        }
+
+        @Override
+        public void onServiceAdded(int status, BluetoothGattService service) {
+            super.onServiceAdded(status, service);
+        }
+
+        @Override
+        public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattCharacteristic characteristic) {
+            super.onCharacteristicReadRequest(device, requestId, offset, characteristic);
+            Log.d("Zack", "onCharacteristicReadRequest requestId=" + requestId + " offset=" + offset);
+
+            if (characteristic.getUuid().equals(UUID.fromString(MY_UUID.toString()))) {
+                Log.d("Zack", "SERVICE_UUID_1");
+                characteristic.setValue("Text:This is a test characteristic");
+                mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS,
+                        offset,
+                        characteristic.getValue());
+            }
+
+        }
+
+        @Override
+        public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic, boolean preparedWrite, boolean responseNeeded, int offset, byte[] value) {
+            super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value);
+            Log.d("Zack", "onCharacteristicWriteRequest requestId=" + requestId + " preparedWrite="
+                    + Boolean.toString(preparedWrite) + " responseNeeded="
+                    + Boolean.toString(responseNeeded) + " offset=" + offset);
+        }
 
     };
 
