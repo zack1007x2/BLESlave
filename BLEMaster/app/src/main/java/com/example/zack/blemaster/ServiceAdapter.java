@@ -1,9 +1,8 @@
 package com.example.zack.blemaster;
 
-import android.bluetooth.le.ScanRecord;
-import android.bluetooth.le.ScanResult;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.content.Context;
-import android.os.ParcelUuid;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -13,37 +12,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Zack on 15/7/31.
+ * Created by Zack on 15/8/4.
  */
-
-public class ScanResultAdapter extends BaseAdapter {
-
-    private List<ScanResult> mDeviceList = new ArrayList<ScanResult>();
+public class ServiceAdapter extends BaseAdapter {
+    private List<BluetoothGattService> mServiceList = new ArrayList<BluetoothGattService>();
     private Context context;
-    private ScanResult mDevice;
+    private BluetoothGattService mService;
 
-    public ScanResultAdapter(Context context) {
+    public ServiceAdapter(Context context) {
         this.context = context;
     }
 
-    public void setDeviceList(List<ScanResult> DeviceList){
-        mDeviceList = DeviceList;
+    public void setServiceList(List<BluetoothGattService> DeviceList){
+        mServiceList = DeviceList;
     }
 
 
     @Override
     public int getCount() {
-        return mDeviceList.size();
+        return mServiceList.size();
     }
 
     @Override
-    public ScanResult getItem(int position) {
-        return mDeviceList.get(position);
+    public BluetoothGattService getItem(int position) {
+        return mServiceList.get(position);
     }
 
     @Override
     public long getItemId(int position) {
         return 0;
+    }
+    public void clear(){
+        mServiceList.clear();
+        this.notifyDataSetChanged();
     }
 
     @Override
@@ -64,18 +65,16 @@ public class ScanResultAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        mDevice = mDeviceList.get(position);
+        mService = mServiceList.get(position);
+        List<BluetoothGattCharacteristic> mCha = mService.getCharacteristics();
+        StringBuffer SB = new StringBuffer();
 
-        viewHolder.tvTitle.setText(mDevice.getDevice().getName());
-        viewHolder.tvMac.setText(mDevice.getDevice().getAddress());
-        ScanRecord scanRecord = mDevice.getScanRecord();
-        List<ParcelUuid> uuids = scanRecord.getServiceUuids();
-        if(uuids != null) {
-            for(int j = 0; j < uuids.size(); j++) {
-                ServiceUUID +=  uuids.get(j).toString() + "\n";
-            }
+        for(int i = 0;i<mCha.size();i++){
+            SB.append(mCha.get(i).getUuid().toString()+"\n");
         }
-        viewHolder.tvContent_title.setText(ServiceUUID);
+
+        viewHolder.tvTitle.setText(mService.getUuid().toString());
+        viewHolder.tvMac.setText(SB.toString());
 
         return convertView;
     }

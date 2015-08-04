@@ -36,7 +36,7 @@ import java.util.UUID;
 
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements View.OnClickListener{
 
     private BluetoothLeAdvertiser bleAd;
     private BluetoothAdapter BAdapter;
@@ -48,20 +48,29 @@ public class MainActivity extends Activity {
     private static final UUID D2_UUID = UUID.fromString("00001112-0000-1000-8000-00805f9b34fb");
     private static final UUID S1_UUID = UUID.fromString("00001811-0000-1000-8000-00805f9b34fb");
     private static final ParcelUuid PUUID = new ParcelUuid(MY_UUID);
-    private TextView tvAddr;
+    private TextView tvAddr,tvStatus1,tvStatus2;
     private BluetoothManager Bm;
-    private Button btScan;
+    private Button btScan,btHome;
     private ListView lvScan;
     private boolean scanning;
     private boolean advtising;
     private BluetoothGatt mgatt;
 
-    private ScanResultAdapter mAdapter;
     private DeviceAdapter dAdapter;
+    private ServiceAdapter sAdapter;
+    private CharacteristicAdapter cAdapter;
 
     private List<BluetoothDevice> mDeviceList = new ArrayList<BluetoothDevice>();
     private BluetoothGattServer mGattServer;
     private BluetoothGattService mGattService;
+    private AdvertiseData.Builder dataBuilder;
+    private AdvertiseSettings.Builder settingsBuilder;
+    private int mode;
+    private static final int MODE_DEVICE = 0;
+    private static final int MODE_SERVICE = 1;
+    private static final int MODE_CHARACTERISTIC = 2;
+
+
 
 
     private List<ScanResult> results;
@@ -78,31 +87,59 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tvAddr = (TextView)findViewById(R.id.tvAddr);
+        tvStatus1 = (TextView)findViewById(R.id.tvStatus1);
+        tvStatus2 = (TextView)findViewById(R.id.tvStatus2);
         btScan = (Button)findViewById(R.id.btScan);
+        btHome = (Button)findViewById(R.id.btHome);
         lvScan = (ListView)findViewById(R.id.lvScan);
-        mAdapter = new ScanResultAdapter(this);
         dAdapter = new DeviceAdapter(this);
-        lvScan.setAdapter(mAdapter);
-        btScan.setOnClickListener(onScanListener);
+        sAdapter = new ServiceAdapter(this);
+        cAdapter = new CharacteristicAdapter(this);
+        btScan.setOnClickListener(this);
+        btHome.setOnClickListener(this);
         lvScan.setOnItemClickListener(onDeviceSelectListener);
-
+        mode = MODE_DEVICE;
 
         Bm = (BluetoothManager) getSystemService(this.BLUETOOTH_SERVICE);
         BAdapter = Bm.getAdapter();
-
-        initGattServer();
-
-
 
         if(BAdapter ==null||!BAdapter.isEnabled()){
             enableBluetooth();
         }else{
             BAdapter.setName("Zack");
+            initGattServer();
+            setup_slave_mode();
         }
-        scanning = false;
-        advtising = false;
 
     }
+
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        mode = MODE_DEVICE;
+        btScan.setText("Scan");
+        tvAddr.setText("");
+        tvStatus1.setText("");
+        tvStatus2.setText("");
+        lvScan.setAdapter(dAdapter);
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        if(getScanning()) {
+            scanning = false;
+            unregisterReceiver(mReceiver);
+            BAdapter.cancelDiscovery();
+            mDeviceList.clear();
+            dAdapter.clear();
+        }else if(getAdvertising()){
+            advtising = false;
+            bleAd.stopAdvertising(mAdvertiseCallback);
+        }
+    }
+
 
     private void initGattServer() {
         BluetoothGattCharacteristic mCharacteristic1, mCharacteristic2, mCharacteristic3;
@@ -117,9 +154,8 @@ public class MainActivity extends Activity {
                 .PERMISSION_READ);
         mCharacteristic3 = new BluetoothGattCharacteristic(C3_UUID,BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_WRITE,
                 BluetoothGattCharacteristic.PERMISSION_READ | BluetoothGattCharacteristic.PERMISSION_WRITE);
-
         des1 = new BluetoothGattDescriptor(D1_UUID,BluetoothGattDescriptor.PERMISSION_READ);
-        des1.setValue(hexStringToByteArray("00abde"));
+        des1.setValue(Util.hexStringToByteArray("00abde"));
         des2 = new BluetoothGattDescriptor(D2_UUID,BluetoothGattDescriptor.PERMISSION_WRITE);
 
         mCharacteristic2.addDescriptor(des1);
@@ -134,8 +170,8 @@ public class MainActivity extends Activity {
 
     private void setup_slave_mode() {
         bleAd = BAdapter.getBluetoothLeAdvertiser();
-        AdvertiseData.Builder dataBuilder = new AdvertiseData.Builder();
-        AdvertiseSettings.Builder settingsBuilder = new AdvertiseSettings.Builder();
+        dataBuilder = new AdvertiseData.Builder();
+        settingsBuilder = new AdvertiseSettings.Builder();
         dataBuilder.setIncludeTxPowerLevel(true);
         dataBuilder.setIncludeDeviceName(true);
         dataBuilder.addServiceUuid(PUUID);
@@ -143,12 +179,17 @@ public class MainActivity extends Activity {
         settingsBuilder.setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH);
         settingsBuilder.setTimeout(100000);
         settingsBuilder.setConnectable(true);
+    }
+
+    private void start_Advertise(){
         bleAd.startAdvertising(settingsBuilder.build(), dataBuilder.build(), mAdvertiseCallback);
         if(bleAd!=null&&BAdapter!=null) {
             tvAddr.setText("NAME = " + BAdapter.getName() + "\nAddress = " + BAdapter.getAddress
                     ()+"\nUUID = "+MY_UUID.toString());
+
         }
     }
+
 
     private void stop_Advertise(){
         bleAd.stopAdvertising(mAdvertiseCallback);
@@ -161,14 +202,14 @@ public class MainActivity extends Activity {
         public void onStartSuccess(AdvertiseSettings settingsInEffect) {
             Log.i("Zack", "Peripheral Advertise Started.");
             advtising = true;
-            btScan.setText("Advertising......");
+            tvStatus1.setText("Advertising......");
         }
 
         @Override
         public void onStartFailure(int errorCode) {
             Log.w("Zack", "Peripheral Advertise Failed: "+errorCode);
             advtising = false;
-            btScan.setText("Advertise");
+            tvStatus1.setText("Advertise Fail");
         }
     };
     public boolean getScanning() {
@@ -193,30 +234,7 @@ public class MainActivity extends Activity {
 
 
 
-    private View.OnClickListener onScanListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if(getAdvertising()){
-                Log.d("Zack","Stop Scan");
-                stop_Advertise();
-                btScan.setText("Advertise");
-            }else{
-                Log.d("Zack","Start Scan");
-                setup_slave_mode();
-                btScan.setText("Stop");
-            }
 
-            if(getScanning()){
-//                stopBleScan();
-                stopBTScan();
-                btScan.setText("Scan");
-            }else {
-//                startBleScan();
-                startBTScan();
-                btScan.setText("Stop");
-            }
-        }
-    };
 
     private void stopBTScan() {
         scanning = false;
@@ -234,63 +252,28 @@ public class MainActivity extends Activity {
         BAdapter.startDiscovery();
     }
 
-    private AdapterView.OnItemClickListener onDeviceSelectListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            final BluetoothDevice device = BAdapter.getRemoteDevice(dAdapter.getItem(position).getAddress());
-            Log.d("Zack","CLICK ITEM = "+device.getName());
-            mgatt = device.connectGatt(MainActivity.this,false,gattCallback);
-            stopBTScan();
-        }
-    };
 
 
     BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
         @Override
         public void onServicesDiscovered (BluetoothGatt gatt, int status){
             Log.d("Zack", "onServicesDiscovered STATUS = " + status);
-            List<BluetoothGattService> mSer = gatt.getServices();
+
+            final List<BluetoothGattService> mSer = gatt.getServices();
 
             for(int i = 0;i<mSer.size();i++){
                 Log.d("Zack",mSer.get(i).getUuid().toString());
             }
-
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                BluetoothGattService Service = mgatt.getService(UUID.fromString
-                        ("00001811-0000-1000-8000-00805f9b34fb"));
-                if (Service == null) {
-                    Log.e("Zack", "service not found!");
-                    return;
-                }
-
-                List<BluetoothGattCharacteristic> mCha = Service.getCharacteristics();
-
-
-                for(int i = 0;i<mCha.size();i++){
-                    Log.d("Zack","CHA = "+mCha.get(i).getUuid().toString());
-                }
-                BluetoothGattCharacteristic characR = Service
-                        .getCharacteristic(UUID.fromString("00002a44-0000-1000-8000-00805f9b34fb"));
-                if (characR == null) {
-                    Log.e("Zack", "characteristic not found!");
-                    return;
-                }
-                characR.setValue(hexStringToByteArray("24"));
-                boolean statsus = mgatt.writeCharacteristic(characR);
-                Log.d("Zack","STA"+statsus);
-
-                BluetoothGattCharacteristic characL = Service
-                        .getCharacteristic(UUID.fromString("00002a47-0000-1000-8000-00805f9b34fb"));
-                mgatt.setCharacteristicNotification(characL, true);
-                if (characL == null) {
-                    Log.e("Zack", "characteristic not found!");
-                    return;
-                }
-                boolean Rs =mgatt.readCharacteristic(characL);
-                Log.d("Zack","STA"+Rs);
-
-
+                mode = MODE_SERVICE;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        sAdapter.setServiceList(mSer);
+                        lvScan.setAdapter(sAdapter);
+                    }
+                });
 
             } else {
                 Log.w("Zack", "onServicesDiscovered received: " + status);
@@ -316,10 +299,17 @@ public class MainActivity extends Activity {
                                          int status) {
             Log.d("Zack", "GATT onCharacteristicRead");
             final BluetoothGattCharacteristic cc = characteristic;
+            String Output = Util.byteArrayToHex(cc.getValue());
+            if(characteristic.getService().getUuid().toString().contains("180f")){
+                Log.d("Zack","Read = "+Util.byteArrayToHex(cc.getValue()));
+                int a = Util.hex2decimal(Util.byteArrayToHex(cc.getValue()));
+                Output = String.valueOf(a);
+            }
+            final String finalOutput = Output;
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    tvAddr.setText(byteArrayToHex(cc.getValue()));
+                    tvAddr.setText(finalOutput);
                 }
             });
 
@@ -345,14 +335,15 @@ public class MainActivity extends Activity {
             // When discovery finds a device
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 // Get the BluetoothDevice object from the Intent
+
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                Log.d("Zack","FOUND DEVICE"+device.getName());
                 // Add the name and address to an array adapter to show in a ListView
                 if(!mDeviceList.contains(device)) {
                     mDeviceList.add(device);
                     dAdapter.setDeviceList(mDeviceList);
                     Log.d("Zack", "mDeviceList Size = " + dAdapter.getCount());
                     dAdapter.notifyDataSetChanged();
-
                 }
             }
         }
@@ -396,21 +387,98 @@ public class MainActivity extends Activity {
     };
 
 
-    public static byte[] hexStringToByteArray(String s) {
-        int len = s.length();
-        byte[] data = new byte[len/2];
 
-        for(int i = 0; i < len; i+=2){
-            data[i/2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i+1), 16));
+
+    @Override
+    public void onClick(View v) {
+        int view = v.getId();
+        switch (view){
+            case R.id.btHome:
+                if(mode == MODE_DEVICE){
+                    //do nothing
+                }else if(mode == MODE_SERVICE){
+                   //back to init
+                    lvScan.setAdapter(dAdapter);
+                    tvStatus1.setText("");
+                    tvAddr.setText("");
+                    btScan.setText("Scan");
+                    if(getAdvertising()){
+                        stop_Advertise();
+                    }
+                    if(getScanning()){
+                        stopBTScan();
+                    }
+                    mode = MODE_DEVICE;
+                }else if(mode == MODE_CHARACTERISTIC){
+                    //back to init
+                    lvScan.setAdapter(dAdapter);
+                    tvStatus1.setText("");
+                    tvAddr.setText("");
+                    btScan.setText("Scan");
+                    if(getAdvertising()){
+                        stop_Advertise();
+                    }
+                    if(getScanning()){
+                        stopBTScan();
+                    }
+                    mode = MODE_DEVICE;
+                }
+                break;
+            case R.id.btScan:
+                if(getAdvertising()){
+                    Log.d("Zack", "Stop Scan");
+                    stop_Advertise();
+                }else{
+                    Log.d("Zack", "Start Scan");
+                    start_Advertise();
+                }
+
+                if(getScanning()){
+                    stopBTScan();
+                    btScan.setText("Scan");
+                }else {
+                    startBTScan();
+                    btScan.setText("Stop");
+                }
+                break;
         }
+    }
 
-        return data;
-    }
-    public static String byteArrayToHex(byte[] a) {
-        StringBuilder sb = new StringBuilder(a.length * 2);
-        for(byte b: a)
-            sb.append(String.format("%02x", b & 0xff));
-        return sb.toString();
-    }
+    private AdapterView.OnItemClickListener onDeviceSelectListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
+            switch (mode){
+                case MODE_DEVICE:
+                    final BluetoothDevice device = BAdapter.getRemoteDevice(dAdapter.getItem(position).getAddress());
+                    Log.d("Zack", "CLICK ITEM = " + device.getName());
+                    mgatt = device.connectGatt(MainActivity.this, false, gattCallback);
+                    stopBTScan();
+                    break;
+                case MODE_SERVICE:
+                    final BluetoothGattService service = sAdapter.getItem(position);
+                    Log.d("Zack","CLICK SERVICE = "+service.toString());
+                    List<BluetoothGattCharacteristic> mCha = service.getCharacteristics();
+                    cAdapter.setCharacteristicList(mCha);
+                    lvScan.setAdapter(cAdapter);
+                    mode = MODE_CHARACTERISTIC;
+                    break;
+                case MODE_CHARACTERISTIC:
+                    Log.d("Zack","CLICK CHARACTERISTIC = "+cAdapter.getItem(position).getUuid().toString());
+                    BluetoothGattCharacteristic mCharater = cAdapter.getItem(position);
+                    if(cAdapter.isCanRead()){
+                        Log.d("Zack","Read");
+                        mgatt.readCharacteristic(mCharater);
+                    }else if(cAdapter.isCanWrite()){
+                        Log.d("Zack","Write");
+                        mgatt.writeCharacteristic(mCharater);
+                    }
+                    break;
+            }
+        }
+    };
+
+
 }
 
