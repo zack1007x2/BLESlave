@@ -29,6 +29,9 @@ public class ScanResultAdapter extends BaseAdapter {
     public void setDeviceList(List<ScanResult> DeviceList){
         mDeviceList = DeviceList;
     }
+    public List<ScanResult> getDeviceList(){
+        return mDeviceList;
+    }
 
 
     @Override
