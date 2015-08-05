@@ -38,12 +38,18 @@ import java.util.UUID;
 
 public class MainActivity extends Activity implements View.OnClickListener{
 
+
+    private static final String TAG = "Zack";
+    private static final String DEVICE_NAME = "ABCABC";
+
+    private static final int REQUEST_BLUETOOTH_ENABLE = 1;
+
     private BluetoothLeAdvertiser bleAd;
     private BluetoothAdapter BAdapter;
     private static final UUID MY_UUID = UUID.randomUUID();
-    private static final UUID C1_UUID = UUID.fromString("0000180F-0000-1000-8000-00805f9b34fb");
-    private static final UUID C2_UUID = UUID.fromString("00001805-0000-1000-8000-00805f9b34fb");
-    private static final UUID C3_UUID = UUID.fromString("00001243-0000-1000-8000-00805f9b34fb");
+    private static final UUID C1_UUID = UUID.fromString("2222180F-0000-1000-8000-00805f9b34fb");
+    private static final UUID C2_UUID = UUID.fromString("22221805-0000-1000-8000-00805f9b34fb");
+    private static final UUID C3_UUID = UUID.fromString("22221243-0000-1000-8000-00805f9b34fb");
     private static final UUID D1_UUID = UUID.fromString("00001111-0000-1000-8000-00805f9b34fb");
     private static final UUID D2_UUID = UUID.fromString("00001112-0000-1000-8000-00805f9b34fb");
     private static final UUID S1_UUID = UUID.fromString("00001811-0000-1000-8000-00805f9b34fb");
@@ -80,7 +86,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private BluetoothGattCharacteristic mCharacteristic;
 
 
-    private final String LIST_UUID = "UUID";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,9 +109,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
         BAdapter = Bm.getAdapter();
 
         if(BAdapter ==null||!BAdapter.isEnabled()){
+            btScan.setEnabled(false);
             enableBluetooth();
         }else{
-            BAdapter.setName("Zack");
+            BAdapter.setName(DEVICE_NAME);
             initGattServer();
             setup_slave_mode();
         }
@@ -200,14 +206,14 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private AdvertiseCallback mAdvertiseCallback = new AdvertiseCallback() {
         @Override
         public void onStartSuccess(AdvertiseSettings settingsInEffect) {
-            Log.i("Zack", "Peripheral Advertise Started.");
+            Log.i(TAG, "Peripheral Advertise Started.");
             advtising = true;
             tvStatus1.setText("Advertising......");
         }
 
         @Override
         public void onStartFailure(int errorCode) {
-            Log.w("Zack", "Peripheral Advertise Failed: "+errorCode);
+            Log.w(TAG, "Peripheral Advertise Failed: "+errorCode);
             advtising = false;
             tvStatus1.setText("Advertise Fail");
         }
@@ -227,8 +233,18 @@ public class MainActivity extends Activity implements View.OnClickListener{
             tvAddr.setText("Bluetooth NOT supported");
         } else if(!BAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, 1);
+            startActivityForResult(enableBtIntent, REQUEST_BLUETOOTH_ENABLE);
         }
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == REQUEST_BLUETOOTH_ENABLE){
+            btScan.setEnabled(true);
+        }
+
     }
 
 
@@ -258,12 +274,12 @@ public class MainActivity extends Activity implements View.OnClickListener{
     BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
         @Override
         public void onServicesDiscovered (BluetoothGatt gatt, int status){
-            Log.d("Zack", "onServicesDiscovered STATUS = " + status);
+            Log.d(TAG, "onServicesDiscovered STATUS = " + status);
 
             final List<BluetoothGattService> mSer = gatt.getServices();
 
             for(int i = 0;i<mSer.size();i++){
-                Log.d("Zack",mSer.get(i).getUuid().toString());
+                Log.d(TAG,mSer.get(i).getUuid().toString());
             }
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 mode = MODE_SERVICE;
@@ -276,7 +292,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 });
 
             } else {
-                Log.w("Zack", "onServicesDiscovered received: " + status);
+                Log.w(TAG, "onServicesDiscovered received: " + status);
             }
         }
 
@@ -284,11 +300,11 @@ public class MainActivity extends Activity implements View.OnClickListener{
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
-                Log.i("Zack", "Connected to GATT server.");
-                Log.d("Zack", gatt.getDevice().toString());
+                Log.i(TAG, "Connected to GATT server.");
+                Log.d(TAG, gatt.getDevice().toString());
                 mgatt.discoverServices();
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                Log.i("Zack", "Disconnected from GATT server.");
+                Log.i(TAG, "Disconnected from GATT server.");
             }
         }
 
@@ -297,11 +313,11 @@ public class MainActivity extends Activity implements View.OnClickListener{
         public void onCharacteristicRead(BluetoothGatt gatt,
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
-            Log.d("Zack", "GATT onCharacteristicRead");
+            Log.d(TAG, "GATT onCharacteristicRead");
             final BluetoothGattCharacteristic cc = characteristic;
             String Output = Util.byteArrayToHex(cc.getValue());
             if(characteristic.getService().getUuid().toString().contains("180f")){
-                Log.d("Zack","Read = "+Util.byteArrayToHex(cc.getValue()));
+                Log.d(TAG,"Read = "+Util.byteArrayToHex(cc.getValue()));
                 int a = Util.hex2decimal(Util.byteArrayToHex(cc.getValue()));
                 Output = String.valueOf(a);
             }
@@ -321,7 +337,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
-            Log.d("Zack","GATT onCharacteristicChanged");
+            Log.d(TAG,"GATT onCharacteristicChanged");
         }
 
 
@@ -337,12 +353,12 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 // Get the BluetoothDevice object from the Intent
 
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                Log.d("Zack","FOUND DEVICE"+device.getName());
+                Log.d(TAG,"FOUND DEVICE"+device.getName());
                 // Add the name and address to an array adapter to show in a ListView
                 if(!mDeviceList.contains(device)) {
                     mDeviceList.add(device);
                     dAdapter.setDeviceList(mDeviceList);
-                    Log.d("Zack", "mDeviceList Size = " + dAdapter.getCount());
+                    Log.d(TAG, "mDeviceList Size = " + dAdapter.getCount());
                     dAdapter.notifyDataSetChanged();
                 }
             }
@@ -354,7 +370,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         @Override
         public void onConnectionStateChange(BluetoothDevice device, int status, int newState) {
             super.onConnectionStateChange(device, status, newState);
-            Log.d("Zack", "onConnectionStateChange status=" + status + "->" + newState);
+            Log.d(TAG, "onConnectionStateChange status=" + status + "->" + newState);
         }
 
         @Override
@@ -365,7 +381,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
         @Override
         public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattCharacteristic characteristic) {
             super.onCharacteristicReadRequest(device, requestId, offset, characteristic);
-            Log.d("Zack", "onCharacteristicReadRequest requestId=" + requestId + " offset=" + offset);
+            Log.d(TAG, "onCharacteristicReadRequest requestId=" + requestId + " offset=" +
+                    offset + "Charatersitic UUID = " + characteristic.getUuid().toString());
 
             if (characteristic.getUuid().equals(UUID.fromString(C2_UUID.toString()))) {
                 characteristic.setValue("Text:This is a test characteristic");
@@ -379,7 +396,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         @Override
         public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic, boolean preparedWrite, boolean responseNeeded, int offset, byte[] value) {
             super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value);
-            Log.d("Zack", "onCharacteristicWriteRequest requestId=" + requestId + " preparedWrite="
+            Log.d(TAG, "onCharacteristicWriteRequest requestId=" + requestId + " preparedWrite="
                     + Boolean.toString(preparedWrite) + " responseNeeded="
                     + Boolean.toString(responseNeeded) + " offset=" + offset);
         }
@@ -426,10 +443,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 break;
             case R.id.btScan:
                 if(getAdvertising()){
-                    Log.d("Zack", "Stop Scan");
+                    Log.d(TAG, "Stop Scan");
                     stop_Advertise();
                 }else{
-                    Log.d("Zack", "Start Scan");
+                    Log.d(TAG, "Start Scan");
                     start_Advertise();
                 }
 
@@ -452,27 +469,34 @@ public class MainActivity extends Activity implements View.OnClickListener{
             switch (mode){
                 case MODE_DEVICE:
                     final BluetoothDevice device = BAdapter.getRemoteDevice(dAdapter.getItem(position).getAddress());
-                    Log.d("Zack", "CLICK ITEM = " + device.getName());
+                    Log.d(TAG, "CLICK ITEM = " + device.getName());
                     mgatt = device.connectGatt(MainActivity.this, false, gattCallback);
                     stopBTScan();
                     break;
                 case MODE_SERVICE:
                     final BluetoothGattService service = sAdapter.getItem(position);
-                    Log.d("Zack","CLICK SERVICE = "+service.toString());
+                    Log.d(TAG,"CLICK SERVICE = "+service.toString());
                     List<BluetoothGattCharacteristic> mCha = service.getCharacteristics();
                     cAdapter.setCharacteristicList(mCha);
                     lvScan.setAdapter(cAdapter);
                     mode = MODE_CHARACTERISTIC;
                     break;
                 case MODE_CHARACTERISTIC:
-                    Log.d("Zack","CLICK CHARACTERISTIC = "+cAdapter.getItem(position).getUuid().toString());
+                    Log.d(TAG,"CLICK CHARACTERISTIC = "+cAdapter.getItem(position).getUuid().toString());
                     BluetoothGattCharacteristic mCharater = cAdapter.getItem(position);
-                    if(cAdapter.isCanRead()){
-                        Log.d("Zack","Read");
+                    if(cAdapter.getmAbilityList().get(position).isReadable()){
                         mgatt.readCharacteristic(mCharater);
-                    }else if(cAdapter.isCanWrite()){
-                        Log.d("Zack","Write");
-                        mgatt.writeCharacteristic(mCharater);
+                    }else if(cAdapter.getmAbilityList().get(position).isWritable()){
+                        if((mCharater.getProperties() & BluetoothGattCharacteristic
+                                .PROPERTY_WRITE) != 0){
+                            Log.d(TAG,"is Writable");
+                            mCharater.setValue("Hello");
+                            boolean success = mgatt.writeCharacteristic(mCharater);
+                            if(success){
+                                Log.d(TAG,"Write Success");
+                            }
+                        }
+
                     }
                     break;
             }

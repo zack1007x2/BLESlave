@@ -41,60 +41,50 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="304" column="36" selection-start-line="304" selection-start-column="36" selection-end-line="304" selection-end-column="36" />
+            <state vertical-scroll-proportion="0.7047354">
+              <caret line="112" column="30" selection-start-line="112" selection-start-column="30" selection-end-line="112" selection-end-column="30" />
               <folding>
-                <element signature="e#2546#2563#0" expanded="true" />
-                <element signature="e#3082#3122#0" expanded="true" />
-                <element signature="e#8298#8299#0" expanded="true" />
-                <element signature="e#8329#8330#0" expanded="true" />
-                <element signature="e#8367#8368#0" expanded="true" />
-                <element signature="e#8399#8400#0" expanded="true" />
-                <element signature="e#9860#10094#0" expanded="true" />
-                <element signature="e#10093#10094#0" expanded="true" />
-                <element signature="e#11495#11654#0" expanded="true" />
-                <element signature="e#11653#11654#0" expanded="true" />
-                <element signature="e#12090#12984#0" expanded="true" />
-                <element signature="e#12983#12984#0" expanded="true" />
-                <element signature="e#16760#18408#0" expanded="true" />
-                <element signature="e#18407#18408#0" expanded="true" />
+                <element signature="e#3246#3286#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CharacteristicAdapter.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="CharacteristicAdapter.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/CharacteristicAdapter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.46945336">
-              <caret line="119" column="29" selection-start-line="119" selection-start-column="29" selection-end-line="119" selection-end-column="29" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="143" column="46" selection-start-line="143" selection-start-column="31" selection-end-line="143" selection-end-column="46" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#476#505#0" expanded="true" />
-                <element signature="e#688#689#0" expanded="true" />
-                <element signature="e#719#720#0" expanded="true" />
-                <element signature="e#754#755#0" expanded="true" />
-                <element signature="e#786#787#0" expanded="true" />
-                <element signature="e#839#840#0" expanded="true" />
-                <element signature="e#877#878#0" expanded="true" />
-                <element signature="e#1055#1056#0" expanded="true" />
-                <element signature="e#1104#1105#0" expanded="true" />
-                <element signature="e#1295#1296#0" expanded="true" />
-                <element signature="e#1319#1320#0" expanded="true" />
+                <element signature="e#936#937#0" expanded="true" />
+                <element signature="e#985#986#0" expanded="true" />
+                <element signature="e#1176#1177#0" expanded="true" />
+                <element signature="e#1200#1201#0" expanded="true" />
+                <element signature="e#4358#4359#0" expanded="true" />
+                <element signature="e#4393#4394#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Const.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/Const.java">
+      <file leaf-file-name="CharacAbility.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/CharacAbility.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="5" column="18" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
-              <folding />
+              <caret line="9" column="33" selection-start-line="9" selection-start-column="33" selection-end-line="9" selection-end-column="33" />
+              <folding>
+                <element signature="e#201#202#0" expanded="true" />
+                <element signature="e#250#251#0" expanded="true" />
+                <element signature="e#290#291#0" expanded="true" />
+                <element signature="e#325#326#0" expanded="true" />
+                <element signature="e#356#357#0" expanded="true" />
+                <element signature="e#405#406#0" expanded="true" />
+                <element signature="e#445#446#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -1461,9 +1451,10 @@
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/ServiceAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/BTCharacteristic.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/Util.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/CharacAbility.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/CharacteristicAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/MainActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/Util.java" />
       </list>
     </option>
   </component>
@@ -1518,6 +1509,9 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
+      <pane id="ProjectPane" />
+      <pane id="Scope" />
       <pane id="Scratches" />
       <pane id="AndroidView">
         <subPane>
@@ -1603,9 +1597,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
-      <pane id="ProjectPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1623,7 +1614,7 @@
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Android Logcat" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="recentsLimit" value="5" />
-    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="ZX1G42BN59" />
+    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="0a646dfc" />
     <property name="FullScreen" value="true" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="OverrideImplement.overriding.sorted" value="false" />
@@ -1830,11 +1821,10 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-1920" y="-93" width="1920" height="1080" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1844,18 +1834,19 @@
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3296146" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.34077078" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24340771" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16453674" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.108093716" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3275862" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -1880,22 +1871,68 @@
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
+          <caret line="304" column="36" selection-start-line="304" selection-start-column="36" selection-end-line="304" selection-end-column="36" />
+          <folding>
+            <element signature="e#3246#3286#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/CharacteristicAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="119" column="29" selection-start-line="119" selection-start-column="29" selection-end-line="119" selection-end-column="29" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#936#937#0" expanded="true" />
+            <element signature="e#985#986#0" expanded="true" />
+            <element signature="e#1176#1177#0" expanded="true" />
+            <element signature="e#1200#1201#0" expanded="true" />
+            <element signature="e#4358#4359#0" expanded="true" />
+            <element signature="e#4393#4394#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/Util.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="25" column="33" selection-start-line="25" selection-start-column="22" selection-end-line="25" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/DeviceAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="74" column="26" selection-start-line="74" selection-start-column="26" selection-end-line="74" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/ServiceAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="84" column="5" selection-start-line="17" selection-start-column="4" selection-end-line="84" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#502#524#0" expanded="true" />
+            <element signature="e#754#755#0" expanded="true" />
+            <element signature="e#795#796#0" expanded="true" />
+            <element signature="e#839#840#0" expanded="true" />
+            <element signature="e#881#882#0" expanded="true" />
+            <element signature="e#952#953#0" expanded="true" />
+            <element signature="e#1001#1002#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
           <caret line="51" column="96" selection-start-line="51" selection-start-column="96" selection-end-line="51" selection-end-column="96" />
           <folding>
-            <element signature="e#2546#2563#0" expanded="true" />
-            <element signature="e#3082#3122#0" expanded="true" />
-            <element signature="e#8298#8299#0" expanded="true" />
-            <element signature="e#8329#8330#0" expanded="true" />
-            <element signature="e#8367#8368#0" expanded="true" />
-            <element signature="e#8399#8400#0" expanded="true" />
-            <element signature="e#9860#10094#0" expanded="true" />
-            <element signature="e#10093#10094#0" expanded="true" />
-            <element signature="e#11495#11654#0" expanded="true" />
-            <element signature="e#11653#11654#0" expanded="true" />
-            <element signature="e#12090#12984#0" expanded="true" />
-            <element signature="e#12983#12984#0" expanded="true" />
-            <element signature="e#16760#18408#0" expanded="true" />
-            <element signature="e#18407#18408#0" expanded="true" />
+            <element signature="e#3246#3286#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1905,20 +1942,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="173" column="48" selection-start-line="173" selection-start-column="48" selection-end-line="173" selection-end-column="48" />
           <folding>
-            <element signature="e#2546#2563#0" expanded="true" />
-            <element signature="e#3082#3122#0" expanded="true" />
-            <element signature="e#8298#8299#0" expanded="true" />
-            <element signature="e#8329#8330#0" expanded="true" />
-            <element signature="e#8367#8368#0" expanded="true" />
-            <element signature="e#8399#8400#0" expanded="true" />
-            <element signature="e#9860#10094#0" expanded="true" />
-            <element signature="e#10093#10094#0" expanded="true" />
-            <element signature="e#11495#11654#0" expanded="true" />
-            <element signature="e#11653#11654#0" expanded="true" />
-            <element signature="e#12090#12984#0" expanded="true" />
-            <element signature="e#12983#12984#0" expanded="true" />
-            <element signature="e#16760#18408#0" expanded="true" />
-            <element signature="e#18407#18408#0" expanded="true" />
+            <element signature="e#3246#3286#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1934,40 +1958,39 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33252427">
           <caret line="2950" column="0" selection-start-line="2950" selection-start-column="0" selection-end-line="2950" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-28.965517">
           <caret line="56" column="46" selection-start-line="56" selection-start-column="46" selection-end-line="56" selection-end-column="46" />
           <folding>
-            <element signature="e#279#314#0" expanded="true" />
-            <element signature="e#352#387#0" expanded="true" />
-            <element signature="e#423#456#0" expanded="true" />
-            <element signature="e#495#528#0" expanded="true" />
-            <element signature="e#612#633#0" expanded="true" />
-            <element signature="e#800#816#0" expanded="true" />
-            <element signature="e#847#863#0" expanded="true" />
-            <element signature="e#1053#1069#0" expanded="true" />
-            <element signature="e#1105#1121#0" expanded="true" />
-            <element signature="e#1155#1171#0" expanded="true" />
-            <element signature="e#1208#1224#0" expanded="true" />
-            <element signature="e#1318#1334#0" expanded="true" />
-            <element signature="e#1365#1381#0" expanded="true" />
-            <element signature="e#1572#1588#0" expanded="true" />
-            <element signature="e#1624#1640#0" expanded="true" />
-            <element signature="e#1674#1690#0" expanded="true" />
-            <element signature="e#1727#1743#0" expanded="true" />
-            <element signature="e#2268#2288#0" expanded="true" />
-            <element signature="e#2415#2431#0" expanded="true" />
-            <element signature="e#2635#2655#0" expanded="true" />
+            <element signature="e#279#314#0" expanded="false" />
+            <element signature="e#352#387#0" expanded="false" />
+            <element signature="e#423#456#0" expanded="false" />
+            <element signature="e#495#528#0" expanded="false" />
+            <element signature="e#612#633#0" expanded="false" />
+            <element signature="e#800#816#0" expanded="false" />
+            <element signature="e#847#863#0" expanded="false" />
+            <element signature="e#1053#1069#0" expanded="false" />
+            <element signature="e#1105#1121#0" expanded="false" />
+            <element signature="e#1155#1171#0" expanded="false" />
+            <element signature="e#1208#1224#0" expanded="false" />
+            <element signature="e#1318#1334#0" expanded="false" />
+            <element signature="e#1365#1381#0" expanded="false" />
+            <element signature="e#1572#1588#0" expanded="false" />
+            <element signature="e#1624#1640#0" expanded="false" />
+            <element signature="e#1674#1690#0" expanded="false" />
+            <element signature="e#1727#1743#0" expanded="false" />
+            <element signature="e#2268#2288#0" expanded="false" />
+            <element signature="e#2415#2431#0" expanded="false" />
+            <element signature="e#2635#2655#0" expanded="false" />
           </folding>
         </state>
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/DeviceAdapter.java">
@@ -2006,19 +2029,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/Const.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="5" column="18" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///Applications/adt-bundle-mac-x86_64-20140702/sdk/sources/android-22/android/bluetooth/BluetoothGatt.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33279744">
           <caret line="880" column="19" selection-start-line="880" selection-start-column="19" selection-end-line="880" selection-end-column="19" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2030,46 +2044,44 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/MainActivity.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/CharacAbility.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="304" column="36" selection-start-line="304" selection-start-column="36" selection-end-line="304" selection-end-column="36" />
+          <caret line="9" column="33" selection-start-line="9" selection-start-column="33" selection-end-line="9" selection-end-column="33" />
           <folding>
-            <element signature="e#2546#2563#0" expanded="true" />
-            <element signature="e#3082#3122#0" expanded="true" />
-            <element signature="e#8298#8299#0" expanded="true" />
-            <element signature="e#8329#8330#0" expanded="true" />
-            <element signature="e#8367#8368#0" expanded="true" />
-            <element signature="e#8399#8400#0" expanded="true" />
-            <element signature="e#9860#10094#0" expanded="true" />
-            <element signature="e#10093#10094#0" expanded="true" />
-            <element signature="e#11495#11654#0" expanded="true" />
-            <element signature="e#11653#11654#0" expanded="true" />
-            <element signature="e#12090#12984#0" expanded="true" />
-            <element signature="e#12983#12984#0" expanded="true" />
-            <element signature="e#16760#18408#0" expanded="true" />
-            <element signature="e#18407#18408#0" expanded="true" />
+            <element signature="e#201#202#0" expanded="true" />
+            <element signature="e#250#251#0" expanded="true" />
+            <element signature="e#290#291#0" expanded="true" />
+            <element signature="e#325#326#0" expanded="true" />
+            <element signature="e#356#357#0" expanded="true" />
+            <element signature="e#405#406#0" expanded="true" />
+            <element signature="e#445#446#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/CharacteristicAdapter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.46945336">
-          <caret line="119" column="29" selection-start-line="119" selection-start-column="29" selection-end-line="119" selection-end-column="29" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="143" column="46" selection-start-line="143" selection-start-column="31" selection-end-line="143" selection-end-column="46" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#476#505#0" expanded="true" />
-            <element signature="e#688#689#0" expanded="true" />
-            <element signature="e#719#720#0" expanded="true" />
-            <element signature="e#754#755#0" expanded="true" />
-            <element signature="e#786#787#0" expanded="true" />
-            <element signature="e#839#840#0" expanded="true" />
-            <element signature="e#877#878#0" expanded="true" />
-            <element signature="e#1055#1056#0" expanded="true" />
-            <element signature="e#1104#1105#0" expanded="true" />
-            <element signature="e#1295#1296#0" expanded="true" />
-            <element signature="e#1319#1320#0" expanded="true" />
+            <element signature="e#936#937#0" expanded="true" />
+            <element signature="e#985#986#0" expanded="true" />
+            <element signature="e#1176#1177#0" expanded="true" />
+            <element signature="e#1200#1201#0" expanded="true" />
+            <element signature="e#4358#4359#0" expanded="true" />
+            <element signature="e#4393#4394#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/zack/blemaster/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7047354">
+          <caret line="112" column="30" selection-start-line="112" selection-start-column="30" selection-end-line="112" selection-end-column="30" />
+          <folding>
+            <element signature="e#3246#3286#0" expanded="true" />
           </folding>
         </state>
       </provider>

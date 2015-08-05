@@ -14,19 +14,14 @@ import java.util.List;
  * Created by Zack on 15/8/4.
  */
 public class CharacteristicAdapter extends BaseAdapter {
-    private List<BluetoothGattCharacteristic> mCharacteristicList = new ArrayList<BluetoothGattCharacteristic>();
+    private List<BluetoothGattCharacteristic> mCharacteristicList = new ArrayList<>();
+    private List<CharacAbility> mAbilityList = new ArrayList<>();
+
+    private CharacAbility mAbi;
+
     private Context context;
     private BluetoothGattCharacteristic mCharacteristic;
-    private boolean mCanRead;
-    private boolean mCanWrite;
 
-    public boolean isCanRead() {
-        return mCanRead;
-    }
-
-    public boolean isCanWrite() {
-        return mCanWrite;
-    }
 
     public CharacteristicAdapter(Context context) {
         this.context = context;
@@ -99,6 +94,7 @@ public class CharacteristicAdapter extends BaseAdapter {
         if(a.length()>1){
             first_byte  = Integer.parseInt(String.valueOf(a.charAt(1)));
         }
+        mAbi = new CharacAbility();
 
         switch (first_byte){
             case 1:
@@ -106,14 +102,16 @@ public class CharacteristicAdapter extends BaseAdapter {
                 break;
             case 2:
                 Property.append("Read");
-                mCanRead = true;
+                mAbi.setReadable(true);
+                mAbi.setWritable(false);
                 break;
             case 4:
                 Property.append("Write_No_Response");
                 break;
             case 8:
                 Property.append("Write");
-                mCanWrite = true;
+                mAbi.setReadable(false);
+                mAbi.setWritable(true);
                 break;
         }
 
@@ -131,6 +129,7 @@ public class CharacteristicAdapter extends BaseAdapter {
                 Property.append(", PROPERTY_EXTENDED_PROPS");
                 break;
         }
+        mAbilityList.add(position,mAbi);
 
         viewHolder.tvContent_title.setText(Property.toString());
 
@@ -141,5 +140,10 @@ public class CharacteristicAdapter extends BaseAdapter {
         TextView tvContent_title,tvTitle,tvMac;
 
     }
+
+    public List<CharacAbility> getmAbilityList() {
+        return mAbilityList;
+    }
+
 
 }
