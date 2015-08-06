@@ -19,6 +19,7 @@ public class DeviceAdapter extends BaseAdapter {
     private List<BluetoothDevice> mDeviceList = new ArrayList<BluetoothDevice>();
     private Context context;
     private BluetoothDevice mDevice;
+    private byte[] buffer = new byte[8192];
 
     public DeviceAdapter(Context context) {
         this.context = context;

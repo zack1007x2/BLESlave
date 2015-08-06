@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Target Info:"
+        android:id="@+id/textView2"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="39dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/tvDevice"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Please Select a file"
+        android:id="@+id/tvfile"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="34dp"
+        android:layout_below="@+id/imageView2"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select file..."
+        android:id="@+id/btSelect"
+        android:layout_below="@+id/tvfile"
+        android:layout_centerHorizontal="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Transfer"
+        android:id="@+id/btSent"
+        android:layout_below="@id/btSelect"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="52dp"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ivTest"
+        android:layout_below="@+id/btSent"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/imageView2"
+        android:layout_margin="10dp"
+        android:background="@android:color/black"
+        android:layout_below="@+id/tvDevice"
+        android:layout_centerHorizontal="true"/>
+
+
+</RelativeLayout>

@@ -76,6 +76,10 @@ public class ServiceAdapter extends BaseAdapter {
         viewHolder.tvTitle.setText(mService.getUuid().toString());
         viewHolder.tvMac.setText(SB.toString());
 
+        if(mService.getUuid().equals(Const.UNIQ_UUID)){
+            viewHolder.tvContent_title.setText("This Service can sent file");
+        }
+
         return convertView;
     }
 

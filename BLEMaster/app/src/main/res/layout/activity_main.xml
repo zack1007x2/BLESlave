@@ -17,7 +17,7 @@
     <Button
         android:layout_width="@dimen/size_80"
         android:layout_height="@dimen/size_80"
-        android:text="Home"
+        android:text="P2P"
         android:id="@+id/btHome"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
@@ -65,5 +65,13 @@
         android:layout_below="@+id/tvStatus1"
         android:layout_centerHorizontal="true"
         />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ivReceive"
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>

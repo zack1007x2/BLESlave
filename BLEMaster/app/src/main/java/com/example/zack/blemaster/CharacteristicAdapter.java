@@ -75,26 +75,24 @@ public class CharacteristicAdapter extends BaseAdapter {
         StringBuffer Property = new StringBuffer();
         Property.append("Property :");
 
-//        if(mCharacteristic.getPermissions()<=4){
-//            Permission = "Permission : read";
-//        }else if(mCharacteristic.getPermissions()%16==0){
-//            Permission = "Permission : write";
-//        }else{
-//            Permission = "Permission : read,write";
-//        }
-//        viewHolder.tvMac.setText(Permission);
-
-
         String a = Integer.toHexString(mCharacteristic
                 .getProperties());
 
+//        Log.d("Zack","Property code = "+a);
 
-        int second_byte = Integer.parseInt(String.valueOf(a.charAt(0)));
-        int first_byte = 0;
+
+        int second_byte = 0;
+        int first_byte = Integer.parseInt(String.valueOf(a.charAt(0)));
         if(a.length()>1){
             first_byte  = Integer.parseInt(String.valueOf(a.charAt(1)));
+            second_byte = Integer.parseInt(String.valueOf(a.charAt(0)));
         }
         mAbi = new CharacAbility();
+
+//        Log.d("Zack","Property 1st code = "+first_byte);
+//        Log.d("Zack","Property 2nd code = "+second_byte);
+
+
 
         switch (first_byte){
             case 1:
