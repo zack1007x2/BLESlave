@@ -43,6 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/lvScan"
+        android:visibility="invisible"
         android:layout_below="@+id/tvAddr"
         android:layout_alignParentStart="true"
         android:layout_above="@+id/btScan"/>
@@ -67,11 +68,10 @@
         />
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:id="@+id/ivReceive"
         android:layout_centerVertical="true"
-        android:visibility="gone"
         android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>

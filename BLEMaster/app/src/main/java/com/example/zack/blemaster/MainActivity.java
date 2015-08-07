@@ -22,7 +22,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.ParcelUuid;
 import android.util.Log;
 import android.view.View;
@@ -31,10 +35,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -43,10 +47,10 @@ import java.util.UUID;
 public class MainActivity extends Activity implements View.OnClickListener {
 
 
-    private static final String TAG = "Zack";
+    private static final String TAG = "Zacks";
     private static final String DEVICE_NEXUS = "NEX6";
     private static final String DEVICE_OTHER = "Zack";
-    private static final boolean NEXUS6 = false;
+    private static final boolean NEXUS6 = true;
 
     private static final int REQUEST_BLUETOOTH_ENABLE = 1;
 
@@ -83,8 +87,41 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private static final int MODE_SERVICE = 1;
     private static final int MODE_CHARACTERISTIC = 2;
 
-    private byte[] buffer = new byte[8192];
+    private static final int MESSAGE_RECEIVE = 100;
+    private static final int MESSAGE_SENT = 101;
+    private static final int OTHER = 102;
+
     private ImageView ivReceive;
+
+    // Constants that indicate the current connection state
+    public static final int STATE_NONE = 0;       // we're doing nothing
+    public static final int STATE_LISTEN = 1;     // now listening for incoming connections
+    public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
+    public static final int STATE_CONNECTED = 3;
+    private AcceptThread mAcceptThread;
+    private ConnectedThread mConnectedThread;
+    private int mState;
+    public Bitmap bmToShow;
+
+
+    private Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch(msg.what){
+                case MESSAGE_RECEIVE:
+                    Log.d(TAG,"RECEIVE IMAGE");
+
+
+                    if (bmToShow != null) {
+                        ivReceive.setImageBitmap(bmToShow);
+                        ivReceive.setVisibility(View.VISIBLE);
+                    }
+
+                    break;
+            }
+        }
+    };
+
 
 
     @Override
@@ -434,13 +471,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.btHome:
                 if (mode == MODE_DEVICE) {
                     reset();
-                    AcceptData acceptData = new AcceptData();
-                    acceptData.start();
-//                    Bitmap image = BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
-//                    if (image != null) {
-//                        ivReceive.setImageBitmap(image);
-//                        ivReceive.setVisibility(View.VISIBLE);
-//                    }
+                    Intent discoverableIntent = new
+                            Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                    discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,300);
+                    startActivity(discoverableIntent);
+
+                    mAcceptThread = new AcceptThread();
+                    mAcceptThread.start();
 
                 } else if (mode == MODE_SERVICE) {
                     //back to init
@@ -543,60 +580,199 @@ public class MainActivity extends Activity implements View.OnClickListener {
     };
 
 
-    class AcceptData extends Thread{
+    /**
+     * This thread runs while listening for incoming connections. It behaves
+     * like a server-side client. It runs until a connection is accepted
+     * (or until cancelled).
+     */
+    private class AcceptThread extends Thread {
+        // The local server socket
         private final BluetoothServerSocket mmServerSocket;
-        private BluetoothSocket socket = null;
-        private InputStream mmInStream;
-        private String device;
-        public AcceptData() {
+        private String mSocketType;
+
+        public AcceptThread() {
             BluetoothServerSocket tmp = null;
+
+            // Create a new listening server socket
             try {
-                tmp = BAdapter.listenUsingRfcommWithServiceRecord("Bluetooth", Const.UNIQ_UUID);
+                    tmp = BAdapter.listenUsingRfcommWithServiceRecord("AcceptBT",
+                            Const.UNIQ_UUID);
             } catch (IOException e) {
+                Log.e(TAG, "Socket Type: " + mSocketType + "listen() failed", e);
             }
-            Log.d(TAG,"listenUsingRfcommWithServiceRecord");
             mmServerSocket = tmp;
-            try {
-                socket = mmServerSocket.accept();
-            } catch (IOException e) {
-            }
-            Log.d(TAG,"accept");
-            device = socket.getRemoteDevice().getName();
-            Toast.makeText(getBaseContext(), "Connected to " + device, Toast.LENGTH_SHORT).show();
-            InputStream tmpIn = null;
-            try {
-                tmpIn = socket.getInputStream();
-            } catch (IOException e) {
-            }
-            mmInStream = tmpIn;
-            int byteNo;
-            try {
-                byteNo = mmInStream.read(buffer);
-                if (byteNo != -1) {
-                    //ensure DATAMAXSIZE Byte is read.
-                    int byteNo2 = byteNo;
-                    int bufferSize = 7340;
-                    while(byteNo2 != bufferSize){
-                        bufferSize = bufferSize - byteNo2;
-                        byteNo2 = mmInStream.read(buffer,byteNo,bufferSize);
-                        if(byteNo2 == -1){
-                            break;
-                        }
-                        byteNo = byteNo+byteNo2;
-                    }
+        }
+
+        public void run() {
+            Log.d(TAG, "Socket Type: " + mSocketType +
+                    "BEGIN mAcceptThread" + this);
+            setName("AcceptThread" + mSocketType);
+
+            BluetoothSocket socket = null;
+
+            // Listen to the server socket if we're not connected
+            while (mState != STATE_CONNECTED) {
+                try {
+                    Log.d(TAG,"TRY to Accept socket");
+                    // This is a blocking call and will only return on a
+                    // successful connection or an exception
+                    socket = mmServerSocket.accept();
+                } catch (IOException e) {
+                    Log.e(TAG, "Socket Type: " + mSocketType + "accept() failed", e);
+                    break;
                 }
+
+                // If a connection was accepted
                 if (socket != null) {
-                    try {
-                        mmServerSocket.close();
-                    } catch (IOException e) {
+                    Log.d(TAG,"mState ================="+mState);
+                    if(mState==STATE_CONNECTED){
+                        try {
+                            socket.close();
+                        } catch (IOException e) {
+                            Log.e(TAG, "Could not close unwanted socket", e);
+                        }
+                    }else{
+                        connected(socket, socket.getRemoteDevice(),
+                                mSocketType);
                     }
                 }
             }
-            catch (Exception e) {
+            Log.i(TAG, "END mAcceptThread, socket Type: " + mSocketType);
+
+        }
+
+        public void cancel() {
+            Log.d(TAG, "Socket Type" + mSocketType + "cancel " + this);
+            try {
+                mmServerSocket.close();
+            } catch (IOException e) {
+                Log.e(TAG, "Socket Type" + mSocketType + "close() of server failed", e);
             }
         }
     }
 
+
+
+    /**
+     * Start the ConnectedThread to begin managing a Bluetooth connection
+     *
+     * @param socket The BluetoothSocket on which the connection was made
+     * @param device The BluetoothDevice that has been connected
+     */
+    public synchronized void connected(BluetoothSocket socket, BluetoothDevice
+            device, final String socketType) {
+        Log.d(TAG, "connected, Socket Type:" + socketType);
+
+        // Cancel any thread currently running a connection
+        if (mConnectedThread != null) {
+            Log.d(TAG,"XXXXXXXXXXXXXXXXXXXXX   666     XXXXXXXXXXXXXXXXXXXXXXX");
+            mConnectedThread.cancel();
+            mConnectedThread = null;
+        }
+
+        // Cancel the accept thread because we only want to connect to one device
+        if (mAcceptThread != null) {
+            Log.d(TAG,"XXXXXXXXXXXXXXXXXXXXX   672     XXXXXXXXXXXXXXXXXXXXXXX");
+            mAcceptThread.cancel();
+            mAcceptThread = null;
+        }
+
+        // Start the thread to manage the connection and perform transmissions
+        mConnectedThread = new ConnectedThread(socket, socketType);
+        mConnectedThread.start();
+
+
+        mState = STATE_CONNECTED;
+    }
+
+    /**
+     * This thread runs during a connection with a remote device.
+     * It handles all incoming and outgoing transmissions.
+     */
+    private class ConnectedThread extends Thread {
+        private final BluetoothSocket mmSocket;
+        private final InputStream mmInStream;
+        private final OutputStream mmOutStream;
+
+        public ConnectedThread(BluetoothSocket socket, String socketType) {
+            Log.d(TAG, "create ConnectedThread: " + socketType);
+            mmSocket = socket;
+            InputStream tmpIn = null;
+            OutputStream tmpOut = null;
+
+            // Get the BluetoothSocket input and output streams
+            try {
+                tmpIn = socket.getInputStream();
+                tmpOut = socket.getOutputStream();
+            } catch (IOException e) {
+                Log.e(TAG, "temp sockets not created", e);
+            }
+
+            mmInStream = tmpIn;
+            mmOutStream = tmpOut;
+        }
+
+        public void run() {
+            Log.i(TAG, "BEGIN mConnectedThread&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+
+            byte[] buffer = new byte[102400];
+            byte[] whole = new byte[0];
+            int bytes = 0;
+            int offset = 0;
+            // Keep listening to the InputStream while connected
+            while (true) {
+                // Read from the InputStream
+                try {
+                    bytes = mmInStream.read(buffer);
+
+                    byte[] data = new byte[bytes];
+                    System.arraycopy(buffer, 0, data, 0, bytes);
+                    whole = concatenateByteArrays(whole,data);
+
+                    String str = new String(buffer);
+                    Log.d(TAG,"Receive#############################" + str);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                final Bitmap myBitmap = BitmapFactory.decodeByteArray(whole, 0, whole.length);
+//                if(myBitmap==null){
+//                    Log.d(TAG,"DECODE IMAGE NULL~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Seiz = "+bytes);
+//                }
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        ivReceive.setImageBitmap(myBitmap);
+//                        ivReceive.setVisibility(View.VISIBLE);
+//                    }
+//                });
+                if(myBitmap!=null) {
+                    Log.d(TAG, "DECODE SUCCESS");
+//                    mHandler.obtainMessage(MESSAGE_RECEIVE, myBitmap);
+                    bmToShow = myBitmap;
+                    mHandler.sendEmptyMessage(MESSAGE_RECEIVE);
+                }else {
+                    Log.d(TAG, "Bitmapnull    get size = " + whole.length);
+                }
+            }
+        }
+
+        public void cancel() {
+            try {
+                mmSocket.close();
+            } catch (IOException e) {
+                Log.e(TAG, "close() of connect socket failed", e);
+            }
+        }
+    }
+
+
+    byte[] concatenateByteArrays(byte[] a, byte[] b) {
+        byte[] result = new byte[a.length + b.length];
+        System.arraycopy(a, 0, result, 0, a.length);
+        System.arraycopy(b, 0, result, a.length, b.length);
+        return result;
+    }
 
 }
 
