@@ -118,8 +118,12 @@ public class P2PActivity extends Activity implements View.OnClickListener {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 ImageToSent.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byte[] byteArray = stream.toByteArray();
+                byte[] headInfo = ("@@@"+byteArray.length+"###").getBytes();
+
+                Log.d(TAG,"Sizzz = "+headInfo+ "Content = "+new String(headInfo));
                 Log.d(TAG, "Size = "+byteArray.length+"Tempt to write " + new String(byteArray));
 
+                this.write(headInfo);
                 this.write(byteArray);
                 break;
             case R.id.btConnect:
@@ -282,7 +286,7 @@ public class P2PActivity extends Activity implements View.OnClickListener {
 
             try {
                 mmOutStream.write(buffer);
-//                mmOutStream.flush();
+                mmOutStream.flush();
             } catch (IOException e) {
                 Log.e(TAG, "Exception during write", e);
             }

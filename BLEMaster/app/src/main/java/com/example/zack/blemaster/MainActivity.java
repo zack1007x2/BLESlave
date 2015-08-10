@@ -50,7 +50,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private static final String TAG = "Zacks";
     private static final String DEVICE_NEXUS = "NEX6";
     private static final String DEVICE_OTHER = "Zack";
-    private static final boolean NEXUS6 = true;
+    private static final boolean NEXUS6 = false;
 
     private static final int REQUEST_BLUETOOTH_ENABLE = 1;
 
@@ -718,41 +718,79 @@ public class MainActivity extends Activity implements View.OnClickListener {
             byte[] buffer = new byte[102400];
             byte[] whole = new byte[0];
             int bytes = 0;
-            int offset = 0;
+            int one_byte = 0;
+            int data_size = 0;
+            int counter =0;
+
+            boolean allow_read_image = false;
             // Keep listening to the InputStream while connected
             while (true) {
                 // Read from the InputStream
-                try {
-                    bytes = mmInStream.read(buffer);
+//                try to read some info   format = @@@IMAGE_SIZE###
 
-                    byte[] data = new byte[bytes];
-                    System.arraycopy(buffer, 0, data, 0, bytes);
-                    whole = concatenateByteArrays(whole,data);
+                if(!allow_read_image){
+                    try {
+                        //read "@@@"
+                        do {
+                            one_byte = mmInStream.read();
+                            Log.d(TAG, "one_byte = " + String.valueOf(one_byte));
+                            if (Character.toString((char) one_byte).equals("@"))
+                                counter++;
+                            else
+                                counter = 0;
+                        } while (counter != 3);
 
-                    String str = new String(buffer);
-                    Log.d(TAG,"Receive#############################" + str);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                        StringBuffer size_sb = new StringBuffer();
 
-                final Bitmap myBitmap = BitmapFactory.decodeByteArray(whole, 0, whole.length);
-//                if(myBitmap==null){
-//                    Log.d(TAG,"DECODE IMAGE NULL~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Seiz = "+bytes);
-//                }
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        ivReceive.setImageBitmap(myBitmap);
-//                        ivReceive.setVisibility(View.VISIBLE);
-//                    }
-//                });
-                if(myBitmap!=null) {
-                    Log.d(TAG, "DECODE SUCCESS");
-//                    mHandler.obtainMessage(MESSAGE_RECEIVE, myBitmap);
-                    bmToShow = myBitmap;
-                    mHandler.sendEmptyMessage(MESSAGE_RECEIVE);
-                }else {
-                    Log.d(TAG, "Bitmapnull    get size = " + whole.length);
+                        //read size
+                        while ((char) (one_byte = mmInStream.read()) != '#') {
+                            size_sb.append(Character.toString((char) one_byte));
+                            Log.d(TAG, size_sb.toString());
+                        }
+                        //flush two byte "#" then allow read Image
+                        if ((char) mmInStream.read() == '#') {
+                            if ((char) mmInStream.read() == '#') {
+                                String headInfo = size_sb.toString();
+                                Log.d(TAG, "headInfo = " + headInfo);
+                                allow_read_image = true;
+                                data_size = Integer.parseInt(headInfo);
+                            }
+                        }
+
+
+                    } catch (Exception ee) {
+                        break;
+                    }
+
+            }else{
+                    try {
+                        bytes = mmInStream.read(buffer);
+
+                        byte[] data = new byte[bytes];
+                        System.arraycopy(buffer, 0, data, 0, bytes);
+                        whole = concatenateByteArrays(whole,data);
+
+                        String str = new String(buffer);
+//                        Log.d(TAG,"bytes = "+bytes);
+//                        Log.d(TAG,"Receive#############################" + str);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    Log.w(TAG,"WHOLE Size = "+whole.length);
+
+                    if(whole.length==data_size) {
+                        final Bitmap myBitmap = BitmapFactory.decodeByteArray(whole, 0, whole.length);
+                        if (myBitmap != null) {
+                            Log.d(TAG, "DECODE SUCCESS");
+                            bmToShow = myBitmap;
+                            mHandler.sendEmptyMessage(MESSAGE_RECEIVE);
+                            break;
+                        } else {
+                            Log.d(TAG, "Bitmapnull    get size = " + whole.length);
+                        }
+                    }
+
                 }
             }
         }
