@@ -19,7 +19,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -32,6 +33,7 @@ public class P2PActivity extends Activity implements View.OnClickListener {
 
     private static final String TAG = "Zacks";
     private static final int RESULT_LOAD_MEDIA = 100;
+    private static final int RESULT_LOAD_VIDEO = 200;
     public static final int STATE_NONE = 0;       // we're doing nothing
     public static final int STATE_LISTEN = 1;     // now listening for incoming connections
     public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
@@ -45,7 +47,7 @@ public class P2PActivity extends Activity implements View.OnClickListener {
     private BluetoothGatt mGatt;
     private BluetoothAdapter mBTAdapter;
     private TextView tvDevice, tvFile;
-    private Button btSelect, btSent,btConnect;
+    private Button btSelect, btSent,btConnect,btSelectVideo;
     private boolean readyTosend;
     private String imagePath, MacAddr;
 
@@ -54,6 +56,7 @@ public class P2PActivity extends Activity implements View.OnClickListener {
     private BluetoothDevice mDevice;
     private Bitmap ImageToSent;
     private OutputStream outStream = null;
+    byte[] bFile;
 
 
     private ConnectThread mConnectThread;
@@ -98,9 +101,11 @@ public class P2PActivity extends Activity implements View.OnClickListener {
         btSent = (Button) findViewById(R.id.btSent);
         ivTest = (ImageView) findViewById(R.id.ivTest);
         btConnect = (Button)findViewById(R.id.btConnect);
+        btSelectVideo = (Button)findViewById(R.id.btSelectVideo);
         btSent.setOnClickListener(this);
         btSelect.setOnClickListener(this);
         btConnect.setOnClickListener(this);
+        btSelectVideo.setOnClickListener(this);
     }
 
     @Override
@@ -115,19 +120,25 @@ public class P2PActivity extends Activity implements View.OnClickListener {
             case R.id.btSent:
 
                 // Perform the write unsynchronized
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                ImageToSent.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                byte[] byteArray = stream.toByteArray();
-                byte[] headInfo = ("@@@"+byteArray.length+"###").getBytes();
+//                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//                ImageToSent.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//                byte[] byteArray = stream.toByteArray();
+                byte[] headInfo = ("@@@"+bFile.length+"###").getBytes();
 
-                Log.d(TAG,"Sizzz = "+headInfo+ "Content = "+new String(headInfo));
-                Log.d(TAG, "Size = "+byteArray.length+"Tempt to write " + new String(byteArray));
+//                Log.d(TAG,"Sizzz = "+headInfo+ "Content = "+new String(headInfo));
+//                Log.d(TAG, "Size = "+bFile.length+"Tempt to write " + new String(bFile));
 
                 this.write(headInfo);
-                this.write(byteArray);
+                this.write(bFile);
                 break;
             case R.id.btConnect:
                 this.connect(mDevice);
+                break;
+
+            case R.id.btSelectVideo:
+                Intent videoChooser = new Intent(Intent.ACTION_PICK);
+                videoChooser.setDataAndType(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, "video/*");
+                startActivityForResult(videoChooser, RESULT_LOAD_VIDEO);
                 break;
         }
     }
@@ -140,14 +151,61 @@ public class P2PActivity extends Activity implements View.OnClickListener {
             case RESULT_LOAD_MEDIA:
                 if (resultCode == RESULT_OK && null != data) {
                     Uri pickedImage = data.getData();
+                    FileInputStream fileInputStream;
                     String[] filePath = {MediaStore.Images.Media.DATA};
                     Cursor cursor = getContentResolver().query(pickedImage, filePath, null, null, null);
                     cursor.moveToFirst();
                     imagePath = cursor.getString(cursor.getColumnIndex(filePath[0]));
-                    ImageToSent = BitmapFactory.decodeFile(imagePath);
+                    BitmapFactory.Options opt = new BitmapFactory.Options();
+                    opt.inScaled = false;
+                    ImageToSent = BitmapFactory.decodeFile(imagePath,opt);
                     tvFile.setText(imagePath);
                     ivTest.setImageBitmap(ImageToSent);
+
+
+
+                    File file = new File(imagePath);
+
+                    bFile = new byte[(int) file.length()];
+
+                    try {
+                        //convert file into array of bytes
+                        Log.w(TAG,"File Length"+ (int) file.length());
+                        fileInputStream = new FileInputStream(file);
+                        fileInputStream.read(bFile);
+                        fileInputStream.close();
+                    }catch (Exception aadf){
+
+                    }
+
+
+
                     cursor.close();
+                }
+                break;
+            case RESULT_LOAD_VIDEO:
+                if (resultCode == RESULT_OK && null != data) {
+                    Uri pickedvideo = data.getData();
+                    FileInputStream fileInputStream;
+                    String[] filePath = {MediaStore.Images.Media.DATA};
+                    Cursor cursor = getContentResolver().query(pickedvideo, filePath, null, null, null);
+                    cursor.moveToFirst();
+                    imagePath = cursor.getString(cursor.getColumnIndex(filePath[0]));
+                    tvFile.setText(imagePath);
+
+                    File file = new File(imagePath);
+
+                    bFile = new byte[(int) file.length()];
+
+                    try {
+                        //convert file into array of bytes
+                        Log.w(TAG,"File Length"+ (int) file.length());
+                        fileInputStream = new FileInputStream(file);
+                        fileInputStream.read(bFile);
+                        fileInputStream.close();
+                    }catch (Exception aadf){
+
+                    }
                 }
                 break;
         }
@@ -200,8 +258,10 @@ public class P2PActivity extends Activity implements View.OnClickListener {
             // Get a BluetoothSocket for a connection with the
             // given BluetoothDevice
             try {
+                    Log.w(TAG,"Start Create RFCOMM Socket to service");
                     tmp = device.createRfcommSocketToServiceRecord(
                             Const.UNIQ_UUID);
+                    Log.w(TAG,"Get ~~~~~~~~~~~~~~~");
             } catch (IOException e) {
                 Log.e(TAG, "Socket Type: " + mSocketType + "create() failed", e);
             }
@@ -213,7 +273,7 @@ public class P2PActivity extends Activity implements View.OnClickListener {
             setName("ConnectThread" + mSocketType);
 
             // Always cancel discovery because it will slow down a connection
-            mBTAdapter.cancelDiscovery();
+//            mBTAdapter.cancelDiscovery();
 
             // Make a connection to the BluetoothSocket
             try {
@@ -284,7 +344,15 @@ public class P2PActivity extends Activity implements View.OnClickListener {
          */
         public void write(byte[] buffer) {
 
+            int MEM_SIZE = 4096;
+            byte[] bb = new byte[MEM_SIZE];
+            int offset = 0;
+
             try {
+//                    for (int i = 0;i<buffer.length;i+=MEM_SIZE){
+//                        int b = ((i+MEM_SIZE) < buffer.length) ? MEM_SIZE: buffer.length - i;
+//                        mmOutStream.write(buffer, i, b);
+//                    }
                 mmOutStream.write(buffer);
                 mmOutStream.flush();
             } catch (IOException e) {

@@ -34,8 +34,17 @@
         android:layout_height="wrap_content"
         android:text="Select file..."
         android:id="@+id/btSelect"
+        android:layout_toLeftOf="@+id/llcenter"
         android:layout_below="@+id/tvfile"
-        android:layout_centerHorizontal="true"/>
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select video..."
+        android:id="@+id/btSelectVideo"
+        android:layout_toRightOf="@+id/llcenter"
+        android:layout_below="@+id/tvfile"
+        />
 
     <Button
         android:layout_width="wrap_content"
@@ -70,6 +79,16 @@
         android:id="@+id/btConnect"
         android:layout_below="@+id/tvDevice"
         android:layout_centerHorizontal="true"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="3dp"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/btSelect"
+        android:layout_centerHorizontal="true"
+        android:layout_alignTop="@+id/btSelect"
+        android:id="@+id/llcenter">
+    </LinearLayout>
 
 
 </RelativeLayout>

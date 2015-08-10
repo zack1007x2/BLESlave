@@ -49,7 +49,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private static final String TAG = "Zacks";
     private static final String DEVICE_NEXUS = "NEX6";
-    private static final String DEVICE_OTHER = "Zack";
+    private static final String DEVICE_OTHER = "N4";
     private static final boolean NEXUS6 = false;
 
     private static final int REQUEST_BLUETOOTH_ENABLE = 1;
@@ -104,16 +104,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public Bitmap bmToShow;
 
 
-    private Handler mHandler = new Handler(){
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch(msg.what){
+            switch (msg.what) {
                 case MESSAGE_RECEIVE:
-                    Log.d(TAG,"RECEIVE IMAGE");
+                    Log.d(TAG, "RECEIVE IMAGE");
 
 
                     if (bmToShow != null) {
                         ivReceive.setImageBitmap(bmToShow);
+                        ivReceive.setVisibility(View.VISIBLE);
+                    }else{
+                        ivReceive.setImageResource(R.mipmap.ic_launcher);
                         ivReceive.setVisibility(View.VISIBLE);
                     }
 
@@ -121,7 +124,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
         }
     };
-
 
 
     @Override
@@ -473,7 +475,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     reset();
                     Intent discoverableIntent = new
                             Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-                    discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,300);
+                    discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
                     startActivity(discoverableIntent);
 
                     mAcceptThread = new AcceptThread();
@@ -498,9 +500,16 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                 if (getScanning()) {
                     stopBTScan();
+                    if(NEXUS6){
+                        mAcceptThread.cancel();
+                    }
                     btScan.setText("Scan");
                 } else {
                     startBTScan();
+                    if(NEXUS6){
+                        mAcceptThread = new AcceptThread();
+                        mAcceptThread.start();
+                    }
                     btScan.setText("Stop");
                 }
                 break;
@@ -543,6 +552,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     final BluetoothDevice device = curdevice;
                     final BluetoothGattService service = sAdapter.getItem(posi);
                     if (service.getUuid().equals(Const.UNIQ_UUID)) {
+                        mgatt.disconnect();
                         Intent intent = new Intent();
                         intent.setClass(MainActivity.this, P2PActivity.class);
                         Bundle bundle = new Bundle();
@@ -592,11 +602,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         public AcceptThread() {
             BluetoothServerSocket tmp = null;
-
             // Create a new listening server socket
             try {
-                    tmp = BAdapter.listenUsingRfcommWithServiceRecord("AcceptBT",
-                            Const.UNIQ_UUID);
+                Log.w(TAG,"Start Listen RFCOMM Service record");
+                tmp = BAdapter.listenUsingRfcommWithServiceRecord("AcceptBT",
+                        Const.UNIQ_UUID);
             } catch (IOException e) {
                 Log.e(TAG, "Socket Type: " + mSocketType + "listen() failed", e);
             }
@@ -613,10 +623,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
             // Listen to the server socket if we're not connected
             while (mState != STATE_CONNECTED) {
                 try {
-                    Log.d(TAG,"TRY to Accept socket");
+                    Log.d(TAG, "###############  Start Accept socket " +
+                            "BLOCK     #############################");
                     // This is a blocking call and will only return on a
                     // successful connection or an exception
                     socket = mmServerSocket.accept();
+                    Log.d(TAG, "###############  finish Accept socket " +
+                            "BLOCK     #############################");
                 } catch (IOException e) {
                     Log.e(TAG, "Socket Type: " + mSocketType + "accept() failed", e);
                     break;
@@ -624,14 +637,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                 // If a connection was accepted
                 if (socket != null) {
-                    Log.d(TAG,"mState ================="+mState);
-                    if(mState==STATE_CONNECTED){
+                    Log.d(TAG, "mState =================" + mState);
+                    if (mState == STATE_CONNECTED) {
                         try {
                             socket.close();
                         } catch (IOException e) {
                             Log.e(TAG, "Could not close unwanted socket", e);
                         }
-                    }else{
+                    } else {
                         connected(socket, socket.getRemoteDevice(),
                                 mSocketType);
                     }
@@ -652,7 +665,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
 
-
     /**
      * Start the ConnectedThread to begin managing a Bluetooth connection
      *
@@ -665,14 +677,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         // Cancel any thread currently running a connection
         if (mConnectedThread != null) {
-            Log.d(TAG,"XXXXXXXXXXXXXXXXXXXXX   666     XXXXXXXXXXXXXXXXXXXXXXX");
+            Log.d(TAG, "XXXXXXXXXXXXXXXXXXXXX   666     XXXXXXXXXXXXXXXXXXXXXXX");
             mConnectedThread.cancel();
             mConnectedThread = null;
         }
 
         // Cancel the accept thread because we only want to connect to one device
         if (mAcceptThread != null) {
-            Log.d(TAG,"XXXXXXXXXXXXXXXXXXXXX   672     XXXXXXXXXXXXXXXXXXXXXXX");
+            Log.d(TAG, "XXXXXXXXXXXXXXXXXXXXX   672     XXXXXXXXXXXXXXXXXXXXXXX");
             mAcceptThread.cancel();
             mAcceptThread = null;
         }
@@ -715,20 +727,24 @@ public class MainActivity extends Activity implements View.OnClickListener {
         public void run() {
             Log.i(TAG, "BEGIN mConnectedThread&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
 
-            byte[] buffer = new byte[102400];
+            byte[] buffer = new byte[4096];
             byte[] whole = new byte[0];
             int bytes = 0;
             int one_byte = 0;
             int data_size = 0;
-            int counter =0;
+            int counter = 0;
 
             boolean allow_read_image = false;
+
+            long offset_time = 0;
+            long curtime = 0;
+
             // Keep listening to the InputStream while connected
             while (true) {
                 // Read from the InputStream
 //                try to read some info   format = @@@IMAGE_SIZE###
 
-                if(!allow_read_image){
+                if (!allow_read_image) {
                     try {
                         //read "@@@"
                         do {
@@ -754,6 +770,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                 Log.d(TAG, "headInfo = " + headInfo);
                                 allow_read_image = true;
                                 data_size = Integer.parseInt(headInfo);
+                                offset_time = System.currentTimeMillis();
                             }
                         }
 
@@ -762,13 +779,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         break;
                     }
 
-            }else{
+                } else {
                     try {
                         bytes = mmInStream.read(buffer);
 
                         byte[] data = new byte[bytes];
                         System.arraycopy(buffer, 0, data, 0, bytes);
-                        whole = concatenateByteArrays(whole,data);
+                        whole = concatenateByteArrays(whole, data);
 
                         String str = new String(buffer);
 //                        Log.d(TAG,"bytes = "+bytes);
@@ -777,14 +794,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         e.printStackTrace();
                     }
 
-                    Log.w(TAG,"WHOLE Size = "+whole.length);
+                    Log.w(TAG, "WHOLE Size = " + whole.length);
 
-                    if(whole.length==data_size) {
+                    if (whole.length == data_size) {
+                        Log.d(TAG, "Speed = " + (((data_size/1024)/((curtime-offset_time)
+                                /1000)))
+                                +"kb/s");
                         final Bitmap myBitmap = BitmapFactory.decodeByteArray(whole, 0, whole.length);
                         if (myBitmap != null) {
                             Log.d(TAG, "DECODE SUCCESS");
                             bmToShow = myBitmap;
                             mHandler.sendEmptyMessage(MESSAGE_RECEIVE);
+                            curtime = System.currentTimeMillis();
+                            if(((curtime-offset_time)/1000)>0) {
+                                Log.d(TAG, "Speed = " + (((data_size / 1024) / ((curtime - offset_time)
+                                        / 1000)))
+                                        + "kb/s");
+                            }
                             break;
                         } else {
                             Log.d(TAG, "Bitmapnull    get size = " + whole.length);

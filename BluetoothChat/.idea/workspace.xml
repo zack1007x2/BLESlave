@@ -5,9 +5,6 @@
       <config />
     </shared>
   </component>
-  <component name="AndroidLogFilters">
-    <option name="TOOL_WINDOW_CUSTOM_FILTER" value="Zacks" />
-  </component>
   <component name="ChangeListManager">
     <list default="true" id="fe169e2c-dbc1-4adc-b30e-5739f330902f" name="Default" comment="" />
     <ignored path="BluetoothChat.iws" />
@@ -39,10 +36,10 @@
       <file leaf-file-name="BluetoothChatService.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Application/src/main/java/com/example/android/bluetoothchat/BluetoothChatService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.8465473">
-              <caret line="500" column="42" selection-start-line="500" selection-start-column="42" selection-end-line="500" selection-end-column="42" />
+            <state vertical-scroll-proportion="0.65473145">
+              <caret line="293" column="0" selection-start-line="293" selection-start-column="0" selection-end-line="293" selection-end-column="0" />
               <folding>
-                <element signature="e#0#18197#0" expanded="true" />
+                <element signature="e#0#18196#0" expanded="true" />
                 <element signature="imports" expanded="true" />
               </folding>
             </state>
@@ -1533,6 +1530,7 @@
     <property name="FullScreen" value="false" />
     <property name="recentsLimit" value="5" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="00991b5bd196aba8" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Downloads/BluetoothAdvertisements" />
   </component>
   <component name="RunManager" selected="Android Application.Application">
     <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
@@ -1736,7 +1734,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1280" height="773" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1788,7 +1786,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="461" column="37" selection-start-line="461" selection-start-column="37" selection-end-line="461" selection-end-column="37" />
           <folding>
-            <element signature="e#0#18197#0" expanded="true" />
+            <element signature="e#0#18196#0" expanded="true" />
             <element signature="imports" expanded="true" />
           </folding>
         </state>
@@ -1833,7 +1831,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#0#18197#0" expanded="true" />
+            <element signature="e#0#18196#0" expanded="true" />
             <element signature="imports" expanded="true" />
           </folding>
         </state>
@@ -1878,7 +1876,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="42" column="37" selection-start-line="42" selection-start-column="37" selection-end-line="42" selection-end-column="37" />
           <folding>
-            <element signature="e#0#18197#0" expanded="true" />
+            <element signature="e#0#18196#0" expanded="true" />
             <element signature="imports" expanded="true" />
           </folding>
         </state>
@@ -1923,7 +1921,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="40" column="13" selection-start-line="40" selection-start-column="13" selection-end-line="40" selection-end-column="13" />
           <folding>
-            <element signature="e#0#18197#0" expanded="true" />
+            <element signature="e#0#18196#0" expanded="true" />
             <element signature="imports" expanded="true" />
           </folding>
         </state>
@@ -1997,10 +1995,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Application/src/main/java/com/example/android/bluetoothchat/BluetoothChatService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8465473">
-          <caret line="500" column="42" selection-start-line="500" selection-start-column="42" selection-end-line="500" selection-end-column="42" />
+        <state vertical-scroll-proportion="0.65473145">
+          <caret line="293" column="0" selection-start-line="293" selection-start-column="0" selection-end-line="293" selection-end-column="0" />
           <folding>
-            <element signature="e#0#18197#0" expanded="true" />
+            <element signature="e#0#18196#0" expanded="true" />
             <element signature="imports" expanded="true" />
           </folding>
         </state>
