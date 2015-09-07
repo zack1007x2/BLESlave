@@ -27,7 +27,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.ParcelUuid;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -56,14 +55,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private BluetoothLeAdvertiser bleAd;
     private BluetoothAdapter BAdapter;
-    private static final UUID CUSTOM_SERVICE_UUID = UUID.randomUUID();
-    private static final UUID C1_UUID = UUID.fromString("2222180F-0000-1000-8000-00805f9b34fb");
-    private static final UUID C2_UUID = UUID.fromString("22221805-0000-1000-8000-00805f9b34fb");
-    private static final UUID C3_UUID = UUID.fromString("22221243-0000-1000-8000-00805f9b34fb");
-    private static final UUID D1_UUID = UUID.fromString("00001111-0000-1000-8000-00805f9b34fb");
-    private static final UUID D2_UUID = UUID.fromString("00001112-0000-1000-8000-00805f9b34fb");
-    private static final UUID S1_UUID = UUID.fromString("00001811-0000-1000-8000-00805f9b34fb");
-    private static final ParcelUuid PUUID = new ParcelUuid(CUSTOM_SERVICE_UUID);
+
+
     private TextView tvAddr, tvStatus1, tvStatus2;
     private BluetoothManager Bm;
     private Button btScan, btHome;
@@ -200,18 +193,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
         BluetoothGattCharacteristic mCharacteristic1, mCharacteristic2, mCharacteristic3;
         BluetoothGattDescriptor des1, des2;
         mGattServer = Bm.openGattServer(this, mBTGattServerCallBack);
-        mGattService = new BluetoothGattService(CUSTOM_SERVICE_UUID, BluetoothGattService.SERVICE_TYPE_PRIMARY);
-        mCharacteristic1 = new BluetoothGattCharacteristic(C1_UUID, BluetoothGattCharacteristic
+        mGattService = new BluetoothGattService(Const.CUSTOM_SERVICE_UUID, BluetoothGattService
+                .SERVICE_TYPE_PRIMARY);
+        mCharacteristic1 = new BluetoothGattCharacteristic(Const.C1_UUID, BluetoothGattCharacteristic
                 .PROPERTY_WRITE, BluetoothGattCharacteristic
                 .PERMISSION_WRITE | BluetoothGattDescriptor.PERMISSION_READ);
-        mCharacteristic2 = new BluetoothGattCharacteristic(C2_UUID, BluetoothGattCharacteristic
+        mCharacteristic2 = new BluetoothGattCharacteristic(Const.C2_UUID, BluetoothGattCharacteristic
                 .PROPERTY_READ, BluetoothGattCharacteristic
                 .PERMISSION_READ);
-        mCharacteristic3 = new BluetoothGattCharacteristic(C3_UUID, BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_WRITE,
+        mCharacteristic3 = new BluetoothGattCharacteristic(Const.C3_UUID, BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_WRITE,
                 BluetoothGattCharacteristic.PERMISSION_READ | BluetoothGattCharacteristic.PERMISSION_WRITE);
-        des1 = new BluetoothGattDescriptor(D1_UUID, BluetoothGattDescriptor.PERMISSION_READ);
+        des1 = new BluetoothGattDescriptor(Const.D1_UUID, BluetoothGattDescriptor.PERMISSION_READ);
         des1.setValue(Util.hexStringToByteArray("00abde"));
-        des2 = new BluetoothGattDescriptor(D2_UUID, BluetoothGattDescriptor.PERMISSION_WRITE);
+        des2 = new BluetoothGattDescriptor(Const.D2_UUID, BluetoothGattDescriptor.PERMISSION_WRITE);
 
         mCharacteristic2.addDescriptor(des1);
         mCharacteristic2.addDescriptor(des2);
@@ -236,7 +230,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         settingsBuilder = new AdvertiseSettings.Builder();
         dataBuilder.setIncludeTxPowerLevel(true);
         dataBuilder.setIncludeDeviceName(true);
-        dataBuilder.addServiceUuid(PUUID);
+        dataBuilder.addServiceUuid(Const.PUUID);
         settingsBuilder.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED);
         settingsBuilder.setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH);
         settingsBuilder.setTimeout(100000);
@@ -248,7 +242,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             bleAd.startAdvertising(settingsBuilder.build(), dataBuilder.build(), mAdvertiseCallback);
             if (bleAd != null && BAdapter != null) {
                 tvAddr.setText("NAME = " + BAdapter.getName() + "\nAddress = " + BAdapter.getAddress
-                        () + "\nUUID = " + CUSTOM_SERVICE_UUID.toString());
+                        () + "\nUUID = " + Const.CUSTOM_SERVICE_UUID.toString());
 
             }
         }
@@ -446,7 +440,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             Log.d(TAG, "onCharacteristicReadRequest requestId=" + requestId + " offset=" +
                     offset + "Charatersitic UUID = " + characteristic.getUuid().toString());
 
-            if (characteristic.getUuid().equals(UUID.fromString(C2_UUID.toString()))) {
+            if (characteristic.getUuid().equals(UUID.fromString(Const.C2_UUID.toString()))) {
                 characteristic.setValue("Text:This is a test characteristic");
                 mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS,
                         offset,
@@ -500,16 +494,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                 if (getScanning()) {
                     stopBTScan();
-                    if(NEXUS6){
-                        mAcceptThread.cancel();
-                    }
                     btScan.setText("Scan");
                 } else {
                     startBTScan();
-                    if(NEXUS6){
-                        mAcceptThread = new AcceptThread();
-                        mAcceptThread.start();
-                    }
                     btScan.setText("Stop");
                 }
                 break;
@@ -552,7 +539,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     final BluetoothDevice device = curdevice;
                     final BluetoothGattService service = sAdapter.getItem(posi);
                     if (service.getUuid().equals(Const.UNIQ_UUID)) {
-                        mgatt.disconnect();
                         Intent intent = new Intent();
                         intent.setClass(MainActivity.this, P2PActivity.class);
                         Bundle bundle = new Bundle();
@@ -785,7 +771,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                         byte[] data = new byte[bytes];
                         System.arraycopy(buffer, 0, data, 0, bytes);
-                        whole = concatenateByteArrays(whole, data);
+                        whole = Util.concatenateByteArrays(whole, data);
 
                         String str = new String(buffer);
 //                        Log.d(TAG,"bytes = "+bytes);
@@ -831,12 +817,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
 
-    byte[] concatenateByteArrays(byte[] a, byte[] b) {
-        byte[] result = new byte[a.length + b.length];
-        System.arraycopy(a, 0, result, 0, a.length);
-        System.arraycopy(b, 0, result, a.length, b.length);
-        return result;
-    }
+
 
 }
 
